@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-
-public class NonPhysicsPlayerTester : MonoBehaviour
+/// <summary>
+/// Translates player input into moving the CharacterController
+/// </summary>
+/// <remarks>Based on the CharacterController2D project by prime31. https://github.com/prime31/CharacterController2D </remarks>
+[RequireComponent(typeof(Animator), typeof(CharacterController2D))]
+public class PlayerController : MonoBehaviour
 {
 	// movement config
 	public float gravity = -25f;
@@ -10,6 +13,9 @@ public class NonPhysicsPlayerTester : MonoBehaviour
 	public float groundDamping = 20f; // how fast do we change direction? higher means faster
 	public float inAirDamping = 5f;
 	public float jumpHeight = 3f;
+    public float jumpDelay = 1f;
+    public float jumpHoldMax = 2f;
+    public int MaxNumberOfJumps = 1;
 
 	[HideInInspector]
 	private float normalizedHorizontalSpeed = 0;
@@ -18,9 +24,9 @@ public class NonPhysicsPlayerTester : MonoBehaviour
 	private Animator _animator;
 	private RaycastHit2D _lastControllerColliderHit;
 	private Vector3 _velocity;
-
-
-
+    private float _jumpHold;
+    private float _jumpTimer;
+    private int _numOfJumps;
 
 	void Awake()
 	{
@@ -62,8 +68,12 @@ public class NonPhysicsPlayerTester : MonoBehaviour
 		// grab our current _velocity to use as a base for all calculations
 		_velocity = _controller.velocity;
 
-		if( _controller.isGrounded )
-			_velocity.y = 0;
+	    if (_controller.isGrounded)
+	    {
+	        _numOfJumps = 0;
+	        _velocity.y = 0;
+	    }
+			
 
 		if( Input.GetKey( KeyCode.RightArrow ) )
 		{
@@ -93,11 +103,26 @@ public class NonPhysicsPlayerTester : MonoBehaviour
 
 
 		// we can only jump whilst grounded
-		if( _controller.isGrounded && Input.GetKeyDown( KeyCode.UpArrow ) )
-		{
-			_velocity.y = Mathf.Sqrt( 2f * jumpHeight * -gravity );
-			_animator.Play( Animator.StringToHash( "Jump" ) );
-		}
+	    if (Input.GetKeyDown(KeyCode.UpArrow))
+	    {
+	        if (canJump())
+	        {
+                _numOfJumps++;
+                _jumpTimer = 0f;
+	            _jumpHold = 1f;
+                _velocity.y = Mathf.Sqrt(_jumpHold*jumpHeight * -gravity);
+                _animator.Play(Animator.StringToHash("Jump"));
+	        }
+            else if (_numOfJumps > 0)
+            {
+                _jumpHold += Time.deltaTime;
+                _velocity.y = Mathf.Sqrt(_jumpHold*jumpHeight*-gravity);
+            }
+	    }
+	    else
+	    {
+	        _jumpTimer += Time.deltaTime;
+	    }
 
 
 		// apply horizontal speed smoothing it
@@ -109,5 +134,14 @@ public class NonPhysicsPlayerTester : MonoBehaviour
 
 		_controller.move( _velocity * Time.deltaTime );
 	}
+
+    private bool canJump()
+    {
+        if (_controller.isGrounded)
+            return true;
+        if (_jumpTimer >= jumpDelay && _numOfJumps < MaxNumberOfJumps)
+            return true;
+        return false;
+    }
 
 }
