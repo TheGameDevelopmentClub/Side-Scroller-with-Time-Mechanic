@@ -56,12 +56,6 @@ public class CharacterController2D : MonoBehaviour
 
 	#region events, properties and fields
 
-	/// <summary>
-	/// toggles if the RigidBody2D methods should be used for movement or if Transform.Translate will be used. All the usual Unity rules for physics based movement apply when true
-	/// such as getting your input in Update and only calling move in FixedUpdate amonst others.
-	/// </summary>
-	public bool usePhysicsForMovement = false;
-
 	[SerializeField]
 	[Range( 0.001f, 0.3f )]
 	private float _skinWidth = 0.02f;
@@ -118,16 +112,6 @@ public class CharacterController2D : MonoBehaviour
 	/// to calculate the length of the ray that checks for slopes.
 	/// </summary>
 	private float _slopeLimitTangent = Mathf.Tan( 75f * Mathf.Deg2Rad );
-
-
-	/// <summary>
-	/// if true, a new GameObject named CC2DTriggerHelper will be created in Awake and latched on via a DistanceJoint2D
-	/// to the player so that trigger messages can be received
-	/// </summary>
-	public bool createTriggerHelperGameObject = false;
-
-	[Range( 0.8f, 0.999f )]
-	public float triggerHelperBoxColliderScale = 0.95f;
 
 
 	[HideInInspector][NonSerialized]
@@ -234,23 +218,11 @@ public class CharacterController2D : MonoBehaviour
 
 
 		// move then update our state
-		if( usePhysicsForMovement )
-		{
-#if UNITY_4_5 || UNITY_4_6
-			rigidbody2D.MovePosition( transform.position + deltaMovement );
-#else
-			rigidbody2D.velocity = deltaMovement / Time.fixedDeltaTime;
-#endif
-			velocity = rigidbody2D.velocity;
-		}
-		else
-		{
-			transform.Translate( deltaMovement, Space.World );
+        transform.Translate(deltaMovement, Space.World);
 
-			// only calculate velocity if we have a non-zero deltaTime
-			if( Time.deltaTime > 0 )
-				velocity = deltaMovement / Time.deltaTime;
-		}
+        // only calculate velocity if we have a non-zero deltaTime
+        if (Time.deltaTime > 0)
+            velocity = deltaMovement / Time.deltaTime;
 
 		// set our becameGrounded state based on the previous and current collision state
 		if( !collisionState.wasGroundedLastFrame && collisionState.below )
