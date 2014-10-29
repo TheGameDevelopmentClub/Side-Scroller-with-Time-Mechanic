@@ -19,11 +19,11 @@ public class Inventory : MonoBehaviour {
 	}
 
 	void Update () {
-		if (Input.GetKeyDown (KeyCode.UpArrow)) {
+		if (Input.GetKeyDown (KeyCode.Q)) {
 			if (selected == 0) selected = inventory.Count - 1;
 			else selected--;
 		}
-		if (Input.GetKeyDown (KeyCode.DownArrow)) {
+		if (Input.GetKeyDown (KeyCode.E)) {
 			if (selected == inventory.Count - 1) selected = 0;
 			else selected++;
 		}
@@ -33,9 +33,8 @@ public class Inventory : MonoBehaviour {
 	{
 		for(int i = 0; i < inventory.Count; i++)
 		{
-			GUI.Label(new Rect(10, (i * 50) + 15, 200, 50), inventory[i].name);
-			GUI.Label(new Rect(70, i * 50, 200, 50), inventory[i].icon);
-			if (selected == i) GUI.Label(new Rect(0, i * 50, 500, 50), selector);
+			GUI.Label(new Rect(20+(70)*i, 20, 200, 50), inventory[i].icon);
+			if (selected == i) GUI.Label(new Rect(20+(70*i), 20, 200, 50), selector);
 		}
 	}
 }
