@@ -3998,6 +3998,7 @@ GameObject:
   - 114: {fileID: 2086931160}
   - 114: {fileID: 2086931167}
   - 82: {fileID: 2086931170}
+  - 114: {fileID: 2086931165}
   m_Layer: 9
   m_Name: hero
   m_TagString: Player
@@ -4104,6 +4105,22 @@ Rigidbody2D:
   m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 0
+--- !u!114 &2086931165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2086931158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 816f054e90b06b44ea157ec893cb9c47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gravity: -25
+  runSpeed: 8
+  groundDamping: 20
+  inAirDamping: 5
+  jumpHeight: 3
 --- !u!114 &2086931167
 MonoBehaviour:
   m_ObjectHideFlags: 0
